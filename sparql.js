@@ -231,10 +231,54 @@ function showPeterParkerInfo() {
 }
 
 
+function showThorInfo() {
+    var sparqlQuery = `
+        SELECT ?image ?givenName  ?presentInWorkLabel
+        WHERE {
+            wd:Q24046102 wdt:P18 ?image ;
+                            wdt:P1477 ?givenName ;
+            OPTIONAL { wd:Q24046102 wdt:P735 ?pseudonym . }
+            OPTIONAL { wd:Q24046102 wdt:P1441 ?presentInWork . }
+            SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+        }
+    `;
+
+    executeSparqlQuery(sparqlQuery, function (data) {
+        var characterInfoDiv = document.getElementById("characterContainer");
+
+        if (data.results.bindings.length > 0) {
+            var character = data.results.bindings[0];
+
+            var image = character.image.value;
+            var givenName = character.givenName ? character.givenName.value : "N/A";
+            var presentInWork = character.presentInWorkLabel ? character.presentInWorkLabel.value : "N/A";
+
+            var html = `
+                <div class="card"  >
+                    <img src="${image}" alt="Imagen de Thor" class="character-image">
+                    <h2>Nombre:</h2>
+                    <p>${givenName} </p>
+                    <h2>Pseudónimo:</h2>
+                    <p>Thor</p>
+                    <h2>Presente en:</h2>
+                    <p>${presentInWork}</p>
+                </div>
+            `;
+
+            characterInfoDiv.innerHTML += html;
+        } else {
+            characterInfoDiv.innerHTML = "No se encontró información de Thor.";
+        }
+    });
+}
+
+
 
 showIronManInfo();
 showBruceBannerInfo();
 showNatashaRomanoffInfo()
 showSteveRogersInfo()
+showThorInfo()
 showPeterParkerInfo()
+
 
